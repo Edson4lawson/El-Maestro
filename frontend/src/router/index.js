@@ -33,6 +33,21 @@ const router = createRouter({
       path: '/reservations',
       name: 'reservations',
       component: () => import('../views/ReservationsView.vue')
+    },
+    {
+      path: '/admin/login',
+      name: 'admin-login',
+      component: () => import('../views/admin/LoginView.vue')
+    },
+    {
+      path: '/admin/otp',
+      name: 'admin-otp',
+      component: () => import('../views/admin/OTPView.vue')
+    },
+    {
+      path: '/admin/dashboard',
+      name: 'admin-dashboard',
+      component: () => import('../views/admin/DashboardView.vue')
     }
   ],
   scrollBehavior() {
