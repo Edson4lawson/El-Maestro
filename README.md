@@ -1,5 +1,49 @@
-# Vue 3 + Vite
+# Restaurant EL MAESTRO
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## 📁 Structure du Projet
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+```
+El-Maestro/
+├── frontend/          # Application Vue.js
+│   ├── src/          # Code source Vue.js
+│   ├── public/       # Fichiers statiques
+│   ├── package.json  # Dépendances frontend
+│   └── vite.config.js # Configuration Vite
+├── backend/          # API PHP
+│   └── api/          # Code source API
+│       ├── config/   # Configuration BDD
+│       ├── models/   # Modèles PHP
+│       └── *.php     # Fichiers API
+├── database/         # Base de données
+│   └── database.sql  # Structure SQL
+└── README.md         # Documentation
+```
+
+## 🚀 Installation
+
+### Frontend (Vue.js)
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Backend (PHP)
+- Serveur PHP requis (Apache/Nginx)
+- Base de données MySQL/MariaDB
+- Importer `database/database.sql`
+
+## 📋 Fonctionnalités
+
+- 🍽️ Menu restaurant interactif
+- 🛒 Panier d'achats
+- 📱 Design responsive
+- 🌗 Mode sombre/clair
+- 📧 Newsletter
+- 📸 Réseaux sociaux
+
+## 🎨 Technologies
+
+- **Frontend**: Vue 3, Vite, TailwindCSS
+- **Backend**: PHP, MySQL
+- **Animations**: GSAP, CSS3
