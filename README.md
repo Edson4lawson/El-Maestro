@@ -2,7 +2,7 @@
 
 ## 📁 Structure du Projet
 
-```
+```text
 El-Maestro/
 ├── frontend/          # Application Vue.js
 │   ├── src/          # Code source Vue.js
@@ -22,6 +22,7 @@ El-Maestro/
 ## 🚀 Installation
 
 ### Frontend (Vue.js)
+
 ```bash
 cd frontend
 npm install

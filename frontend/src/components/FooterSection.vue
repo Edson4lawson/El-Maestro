@@ -1,7 +1,7 @@
 <template>
   <footer class="relative" :class="isDark ? 'bg-m-obsidian' : 'bg-m-linen'">
     <div class="h-1 relative overflow-hidden">
-      <div class="absolute inset-0 bg-gradient-to-r from-transparent via-m-gold/30 via-m-gold to-transparent animate-pulse"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-transparent via-m-gold/30 to-transparent animate-pulse"></div>
       <div class="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-m-gold/30 animate-slide"></div>
     </div>
     
