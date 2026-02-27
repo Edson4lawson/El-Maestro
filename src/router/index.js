@@ -1,0 +1,43 @@
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: HomeView
+    },
+    {
+      path: '/details/:id',
+      name: 'plate-details',
+      component: () => import('../views/PlateDetailView.vue')
+    },
+    {
+      path: '/menu',
+      name: 'menu',
+      component: () => import('../views/MenuView.vue')
+    },
+    {
+      path: '/commander',
+      name: 'checkout',
+      component: () => import('../views/CheckoutView.vue')
+    },
+    {
+      path: '/fidelite',
+      name: 'loyalty',
+      component: () => import('../views/LoyaltyView.vue')
+    },
+    {
+      path: '/reservations',
+      name: 'reservations',
+      component: () => import('../views/ReservationsView.vue')
+    }
+  ],
+  scrollBehavior() {
+    return { top: 0 }
+  }
+})
+
+export default router
