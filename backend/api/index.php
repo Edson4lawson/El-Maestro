@@ -85,6 +85,27 @@ elseif ($method === 'POST' && isRoute($uri, 'reservation')) {
     }
 }
 
+// --- POST ADMIN LOGIN ---
+elseif ($method === 'POST' && isRoute($uri, 'admin/login')) {
+    include_once './controllers/AuthController.php';
+    $controller = new AuthController();
+    $controller->login();
+}
+
+// --- POST ADMIN VERIFY OTP ---
+elseif ($method === 'POST' && isRoute($uri, 'admin/verify-otp')) {
+    include_once './controllers/AuthController.php';
+    $controller = new AuthController();
+    $controller->verifyOTP();
+}
+
+// --- POST ADMIN LOGOUT ---
+elseif ($method === 'POST' && isRoute($uri, 'admin/logout')) {
+    include_once './controllers/AuthController.php';
+    $controller = new AuthController();
+    $controller->logout();
+}
+
 // --- GET LOYALTY ---
 elseif ($method === 'GET' && isRoute($uri, 'loyalty')) {
     $phone = $_GET['phone'] ?? '';
