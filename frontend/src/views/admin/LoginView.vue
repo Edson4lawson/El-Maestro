@@ -72,6 +72,10 @@ const handleLogin = async () => {
   error.value = ''
   
   try {
+    console.log('Tentative de connexion...')
+    console.log('Email:', form.value.email)
+    console.log('Password:', form.value.password ? '***' : 'vide')
+    
     const response = await fetch('http://localhost:8080/api/index.php?action=admin/login', {
       method: 'POST',
       headers: {
@@ -82,6 +86,9 @@ const handleLogin = async () => {
         password: form.value.password
       })
     })
+    
+    console.log('Response status:', response.status)
+    console.log('Response headers:', response.headers)
     
     const data = await response.json()
     console.log('API Response:', data)  // Debug
