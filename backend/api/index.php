@@ -123,13 +123,8 @@ elseif ($method === 'GET' && isRoute($uri, 'loyalty')) {
     if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         echo json_encode($row);
     } else {
-        // Create auto if doesn't exist for demo/user experience
-        $insert = "INSERT INTO loyalty_users (phone, points, tier) VALUES (:phone, 100, 'Bronze')";
-        $stmt_in = $db->prepare($insert);
-        $stmt_in->bindParam(":phone", $phone);
-        $stmt_in->execute();
-        
-        echo json_encode(["phone" => $phone, "points" => 100, "tier" => "Bronze"]);
+        http_response_code(404);
+        echo json_encode(["message" => "User not found."]);
     }
 }
 
