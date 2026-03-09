@@ -99,6 +99,7 @@ const handleLogin = async () => {
       window.location.href = '/admin/otp'
     } else {
       error.value = data.message
+      console.log('API Error Response:', data)  // Debug
     }
   } catch (err) {
     error.value = 'Erreur de connexion. Veuillez réessayer.'
