@@ -10,10 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// Debug: Log all requests
-error_log("Request URI: " . $_SERVER['REQUEST_URI']);
-error_log("Request Method: " . $_SERVER['REQUEST_METHOD']);
-
 include_once './config/database.php';
 include_once './models/Plate.php';
 include_once './models/Order.php';
@@ -30,12 +26,8 @@ function isRoute($uri, $path) {
     return str_contains($uri, $path);
 }
 
-// Debug: Log parsed URI
-error_log("Parsed URI: " . $uri);
-error_log("Method: " . $method);
-
 // --- GET PLATES ---
-if ($method === 'GET' && (isRoute($uri, 'plates') || $uri === '/api' || $uri === '/api/' || $uri === '/api/index.php')) {
+if ($method === 'GET' && (isRoute($uri, 'plates') || $uri === '/api' || $uri === '/api/')) {
     $plate = new Plate($db);
     $stmt = $plate->readAll();
     $num = $stmt->rowCount();
@@ -125,11 +117,11 @@ elseif ($method === 'GET' && isRoute($uri, 'loyalty')) {
     
     $query = "SELECT * FROM loyalty_users WHERE phone = :phone LIMIT 1";
     $stmt = $db->prepare($query);
-    $stmt->execute(['phone' => $phone]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt->bindParam(":phone", $phone);
+    $stmt->execute();
     
-    if ($user) {
-        echo json_encode($user);
+    if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        echo json_encode($row);
     } else {
         http_response_code(404);
         echo json_encode(["message" => "User not found."]);
@@ -173,26 +165,9 @@ elseif ($method === 'GET' && isRoute($uri, 'images')) {
     readfile($imagePath);
 }
 
-// --- DEFAULT ROUTE ---
 else {
-    error_log("Route not found: " . $uri);
     http_response_code(404);
-    echo json_encode([
-        "error" => "Route not found",
-        "uri" => $uri,
-        "method" => $method,
-        "available_routes" => [
-            "GET /api/plates",
-            "GET /api/plates/{id}",
-            "POST /api/review",
-            "POST /api/order",
-            "POST /api/reservation",
-            "GET /api/loyalty",
-            "GET /api/images/{filename}",
-            "POST /api/admin/login",
-            "POST /api/admin/verify-otp",
-            "POST /api/admin/logout"
-        ]
-    ]);
+    echo json_encode(["message" => "Route not found."]);
 }
 ?>
+

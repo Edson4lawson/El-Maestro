@@ -49,8 +49,6 @@
             <span v-else>Valider</span>
           </button>
         </form>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -101,7 +99,7 @@ const verifyOTP = async () => {
       return
     }
     
-    const response = await fetch('http://localhost:8000/backend/api/index.php?action=admin/verify-otp', {
+    const response = await fetch('http://localhost:8080/api/index.php?action=admin/verify-otp', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -201,11 +199,22 @@ onUnmounted(() => {
 
 <style scoped>
 .btn-gold {
-  @apply bg-m-gold text-m-obsidian font-bold py-3 px-6 rounded-lg hover:bg-m-gold/90 transition-all duration-300;
+  background-color: rgb(212, 175, 55);
+  color: rgb(28, 28, 28);
+  font-weight: bold;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s;
+}
+
+.btn-gold:hover {
+  background-color: rgba(212, 175, 55, 0.9);
 }
 
 .text-gradient-gold {
-  @apply bg-clip-text text-transparent bg-premium-gradient;
+  background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(45deg, #d4af37, #fbbf24, #d4af37);
   background-size: 200% auto;
   animation: shine 3s linear infinite;
 }

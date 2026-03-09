@@ -72,7 +72,7 @@ const handleLogin = async () => {
   error.value = ''
   
   try {
-    const response = await fetch('http://localhost:8000/api/index.php?action=admin/login', {
+    const response = await fetch('http://localhost:8080/api/index.php?action=admin/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
