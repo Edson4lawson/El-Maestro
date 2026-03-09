@@ -27,12 +27,13 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 // Helper to check route
 function isRoute($uri, $path) {
-    return str_contains($uri, $path);
+    return str_contains($uri, $path) || str_contains($_SERVER['QUERY_STRING'] ?? '', $path);
 }
 
 // Debug: Log parsed URI
 error_log("Parsed URI: " . $uri);
 error_log("Method: " . $method);
+error_log("Query String: " . ($_SERVER['QUERY_STRING'] ?? 'none'));
 
 // --- SERVE IMAGES ---
 if ($method === 'GET' && isset($_GET['file'])) {
