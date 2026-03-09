@@ -34,8 +34,45 @@ function isRoute($uri, $path) {
 error_log("Parsed URI: " . $uri);
 error_log("Method: " . $method);
 
+// --- SERVE IMAGES ---
+if ($method === 'GET' && isset($_GET['file'])) {
+    $imageFile = $_GET['file'] ?? '';
+    if (empty($imageFile)) {
+        http_response_code(400);
+        echo json_encode(["error" => "Image file parameter required"]);
+        exit;
+    }
+    
+    // Security: only allow specific file extensions
+    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+    $fileExtension = strtolower(pathinfo($imageFile, PATHINFO_EXTENSION));
+    
+    if (!in_array($fileExtension, $allowedExtensions)) {
+        http_response_code(403);
+        echo json_encode(["error" => "File type not allowed"]);
+        exit;
+    }
+    
+    // Construct the full path to the image
+    $imagePath = __DIR__ . '/../../frontend/src/assets/' . basename($imageFile);
+    
+    if (!file_exists($imagePath)) {
+        http_response_code(404);
+        echo json_encode(["error" => "Image not found"]);
+        exit;
+    }
+    
+    // Get MIME type
+    $mimeType = mime_content_type($imagePath);
+    
+    // Serve image
+    header("Content-Type: $mimeType");
+    header("Cache-Control: public, max-age=31536000"); // Cache for 1 year
+    readfile($imagePath);
+}
+
 // --- GET PLATES ---
-if ($method === 'GET' && (isRoute($uri, 'plates') || $uri === '/api' || $uri === '/api/' || $uri === '/api/index.php')) {
+elseif ($method === 'GET' && (isRoute($uri, 'plates') || $uri === '/api' || $uri === '/api/' || $uri === '/api/index.php')) {
     $plate = new Plate($db);
     $stmt = $plate->readAll();
     $num = $stmt->rowCount();
@@ -136,43 +173,6 @@ elseif ($method === 'GET' && isRoute($uri, 'loyalty')) {
     }
 }
 
-// --- SERVE IMAGES ---
-elseif ($method === 'GET' && isRoute($uri, 'images')) {
-    $imageFile = $_GET['file'] ?? '';
-    if (empty($imageFile)) {
-        http_response_code(400);
-        echo json_encode(["error" => "Image file parameter required"]);
-        exit;
-    }
-    
-    // Security: only allow specific file extensions
-    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
-    $fileExtension = strtolower(pathinfo($imageFile, PATHINFO_EXTENSION));
-    
-    if (!in_array($fileExtension, $allowedExtensions)) {
-        http_response_code(403);
-        echo json_encode(["error" => "File type not allowed"]);
-        exit;
-    }
-    
-    // Construct the full path to the image
-    $imagePath = __DIR__ . '/../src/assets/' . basename($imageFile);
-    
-    if (!file_exists($imagePath)) {
-        http_response_code(404);
-        echo json_encode(["error" => "Image not found"]);
-        exit;
-    }
-    
-    // Get the MIME type
-    $mimeType = mime_content_type($imagePath);
-    
-    // Serve the image
-    header("Content-Type: $mimeType");
-    header("Cache-Control: public, max-age=31536000"); // Cache for 1 year
-    readfile($imagePath);
-}
-
 // --- DEFAULT ROUTE ---
 else {
     error_log("Route not found: " . $uri);
@@ -184,11 +184,11 @@ else {
         "available_routes" => [
             "GET /api/plates",
             "GET /api/plates/{id}",
+            "GET /api/images/{filename}",
             "POST /api/review",
             "POST /api/order",
             "POST /api/reservation",
             "GET /api/loyalty",
-            "GET /api/images/{filename}",
             "POST /api/admin/login",
             "POST /api/admin/verify-otp",
             "POST /api/admin/logout"

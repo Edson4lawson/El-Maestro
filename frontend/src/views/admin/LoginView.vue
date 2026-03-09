@@ -84,6 +84,7 @@ const handleLogin = async () => {
     })
     
     const data = await response.json()
+    console.log('API Response:', data)  // Debug
     
     if (data.success) {
       // Stocker le token et rediriger vers OTP
