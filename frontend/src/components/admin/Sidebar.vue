@@ -96,6 +96,7 @@ const logout = () => {
 
 <style scoped>
 .router-link-active {
-  @apply bg-white/20 border-l-2 border-m-gold;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-left: 2px solid rgb(212, 175, 55);
 }
 </style>

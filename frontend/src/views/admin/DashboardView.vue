@@ -198,7 +198,9 @@ const initCategoriesChart = () => {
 
 <style scoped>
 .text-gradient-gold {
-  @apply bg-clip-text text-transparent bg-premium-gradient;
+  background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(45deg, #d4af37, #fbbf24, #d4af37);
   background-size: 200% auto;
   animation: shine 3s linear infinite;
 }
