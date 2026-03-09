@@ -20,9 +20,10 @@ class AuthController {
     
     // Login admin avec génération OTP
     public function login() {
-        error_log("AuthController: login() called");
-        $data = json_decode(file_get_contents('php://input'), true);
-        error_log("AuthController: received data: " . json_encode($data));
+        try {
+            error_log("AuthController: login() called");
+            $data = json_decode(file_get_contents('php://input'), true);
+            error_log("AuthController: received data: " . json_encode($data));
         
         // Validation
         if (!isset($data['email']) || !isset($data['password'])) {
@@ -83,6 +84,11 @@ class AuthController {
             'message' => 'OTP envoyé sur votre téléphone',
             'expires_in' => 60 // secondes
         ]);
+        } catch (Exception $e) {
+            error_log("AuthController error: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erreur serveur: ' . $e->getMessage()]);
+        }
     }
     
     // Vérification OTP
