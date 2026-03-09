@@ -20,7 +20,9 @@ class AuthController {
     
     // Login admin avec génération OTP
     public function login() {
+        error_log("AuthController: login() called");
         $data = json_decode(file_get_contents('php://input'), true);
+        error_log("AuthController: received data: " . json_encode($data));
         
         // Validation
         if (!isset($data['email']) || !isset($data['password'])) {
