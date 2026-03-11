@@ -6,6 +6,7 @@ import gsap from 'gsap'
 import StarRating from '../components/StarRating.vue'
 import { useCartStore } from '../stores/cart'
 import { plateService } from '../services/api'
+import { getImageUrl } from '../components/PlateCard.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -107,7 +108,7 @@ onMounted(async () => {
         <div class="relative flex justify-center items-center" style="perspective: 1200px;">
           <div ref="plateRef" class="relative z-10 w-full max-w-lg cursor-grab active:cursor-grabbing">
             <img 
-              :src="plate.image" 
+              :src="getImageUrl(plate.image)" 
               :alt="plate.name" 
               class="w-full drop-shadow-[0_60px_100px_rgba(212,175,55,0.4)]"
             />

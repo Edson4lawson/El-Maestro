@@ -25,6 +25,9 @@ const getImageUrl = (imageUrl) => {
   return imageUrl.replace('localhost:8000', 'localhost:8080')
 }
 
+// Exporter la fonction pour l'utiliser dans d'autres composants
+export { getImageUrl }
+
 const cardRef = ref(null)
 const imageRef = ref(null)
 
