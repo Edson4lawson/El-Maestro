@@ -3,6 +3,7 @@ import { ref, inject } from 'vue'
 import gsap from 'gsap'
 import { ShoppingCart, Star, Clock } from 'lucide-vue-next'
 import { useCartStore } from '../stores/cart'
+import { getImageUrl } from '../utils/imageUtils'
 
 const props = defineProps(['plate'])
 const emit = defineEmits(['added-to-cart'])
@@ -18,15 +19,6 @@ const addToCart = () => {
 
 // Debug pour vérifier les URLs d'images
 console.log('Plate image URL:', props.plate.image)
-
-// Fonction pour corriger les URLs d'images
-const getImageUrl = (imageUrl) => {
-  if (!imageUrl) return ''
-  return imageUrl.replace('localhost:8000', 'localhost:8080')
-}
-
-// Exporter la fonction pour l'utiliser dans d'autres composants
-export { getImageUrl }
 
 const cardRef = ref(null)
 const imageRef = ref(null)

@@ -6,7 +6,7 @@ import gsap from 'gsap'
 import StarRating from '../components/StarRating.vue'
 import { useCartStore } from '../stores/cart'
 import { plateService } from '../services/api'
-import { getImageUrl } from '../components/PlateCard.vue'
+import { getImageUrl } from '../utils/imageUtils'
 
 const route = useRoute()
 const router = useRouter()
