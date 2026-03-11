@@ -16,6 +16,15 @@ const addToCart = () => {
   emit('added-to-cart')
 }
 
+// Debug pour vérifier les URLs d'images
+console.log('Plate image URL:', props.plate.image)
+
+// Fonction pour corriger les URLs d'images
+const getImageUrl = (imageUrl) => {
+  if (!imageUrl) return ''
+  return imageUrl.replace('localhost:8000', 'localhost:8080')
+}
+
 const cardRef = ref(null)
 const imageRef = ref(null)
 
@@ -59,7 +68,7 @@ const handleMouseLeave = () => {
       <div class="plate-4d-glow"></div>
       <img 
         ref="imageRef"
-        :src="plate.image" 
+        :src="getImageUrl(plate.image)" 
         :alt="plate.name"
         class="w-full h-full object-contain filter drop-shadow-[0_40px_50px_rgba(255,215,0,0.25)] group-hover:drop-shadow-[0_60px_80px_rgba(255,215,0,0.4)] transition-all duration-500 z-10"
       />
