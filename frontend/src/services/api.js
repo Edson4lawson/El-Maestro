@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:8000/api' // Adjust to your PHP server path
+const API_URL = 'http://localhost:8080/api' // Adjust to your PHP server path
 
 const api = axios.create({
   baseURL: API_URL,
