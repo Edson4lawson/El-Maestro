@@ -102,8 +102,17 @@ const handleLogin = async () => {
       console.log('API Error Response:', data)  // Debug
     }
   } catch (err) {
-    error.value = 'Erreur de connexion. Veuillez réessayer.'
-    console.error('Login error:', err)
+    console.error('Login error details:', err)
+    
+    // Si c'est une erreur de parsing JSON
+    if (err.message && err.message.includes('JSON')) {
+      error.value = 'Erreur de communication avec le serveur. Vérifiez que le backend est démarré.'
+    } else if (err.response) {
+      // Si le serveur a répondu avec une erreur
+      error.value = `Erreur ${err.response.status}: ${err.response.statusText || 'Connexion refusée'}`
+    } else {
+      error.value = 'Erreur de connexion. Veuillez réessayer.'
+    }
   } finally {
     loading.value = false
   }
