@@ -34,7 +34,35 @@ npm run dev
 - Base de données MySQL/MariaDB
 - Importer `database/database.sql`
 
-## 📋 Fonctionnalités
+## � Démarrage du Projet
+
+### Lancer le Backend (API PHP)
+```bash
+cd backend/api
+php -S localhost:8080
+```
+*Le backend sera accessible sur http://localhost:8080*
+
+### Lancer le Frontend (Vue.js)
+```bash
+cd frontend
+npm install
+npm run dev
+```
+*Le frontend sera accessible sur http://localhost:5173*
+
+### Ordre de démarrage recommandé
+1. **D'abord le backend** : `cd backend/api && php -S localhost:8080`
+2. **Ensuite le frontend** : `cd frontend && npm run dev`
+3. **Accès au site** : http://localhost:5173
+4. **Accès admin** : http://localhost:5173/admin/login
+
+### Identifiants Admin
+- **Email** : admin@elmaestro.bj
+- **Mot de passe** : admin123
+- **Processus** : Login → OTP → Dashboard
+
+## �📋 Fonctionnalités
 
 - 🍽️ Menu restaurant interactif
 - 🛒 Panier d'achats
