@@ -4,9 +4,9 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
-include_once '../config/database.php';
-include_once '../models/Admin.php';
-include_once '../services/OTPService.php';
+include_once __DIR__ . '/../config/database.php';
+include_once __DIR__ . '/../models/Admin.php';
+include_once __DIR__ . '/../services/OTPService.php';
 
 class AuthController {
     private $db;
