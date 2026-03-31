@@ -179,7 +179,7 @@ onMounted(async () => {
           <div class="stagger-in mt-12 pt-12 border-t" :class="isDark ? 'border-white/5' : 'border-black/5'">
             <h4 class="text-lg font-bold mb-4">Notez ce plat</h4>
             <div class="flex items-center gap-6">
-              <StarRating v-model:rating="userRating" :editable="true" />
+              <StarRating v-model="userRating" :editable="true" />
               <p v-if="userRating > 0" class="text-sm opacity-60">Merci pour votre note de {{ userRating }} étoiles !</p>
             </div>
           </div>
