@@ -54,12 +54,22 @@ const deliveryLover = ref('Ismaël')
       
       <!-- Stepper -->
       <div class="flex justify-between items-center mb-16 max-w-2xl mx-auto relative">
-        <div class="absolute top-1/2 left-0 right-0 h-[2px] bg-white/5 -translate-y-1/2 -z-10"></div>
-        <div class="absolute top-1/2 left-0 h-[2px] bg-gradient-to-r from-m-gold to-yellow-500 -translate-y-1/2 -z-10 transition-all duration-700 shadow-[0_0_15px_rgba(255,215,0,0.5)]" :style="{ width: step === 1 ? '0%' : step === 2 ? '50%' : '100%' }"></div>
+        <div class="absolute top-1/2 left-0 right-0 h-[2px] -translate-y-1/2 -z-10" :class="isDark ? 'bg-white/5' : 'bg-gray-900/20'"></div>
+        <div class="absolute top-1/2 left-0 h-[2px] -translate-y-1/2 -z-10 transition-all duration-700 shadow-[0_0_15px_rgba(255,215,0,0.5)]" 
+             :class="isDark ? 'bg-gradient-to-r from-m-gold to-yellow-500' : 'bg-gradient-to-r from-amber-600 to-orange-500'"
+             :style="{ width: step === 1 ? '0%' : step === 2 ? '50%' : '100%' }"></div>
         
         <div v-for="i in 3" :key="i" 
           class="w-12 h-12 rounded-full flex items-center justify-center font-bold transition-all duration-500 shadow-xl"
-          :class="[step >= i ? 'bg-m-gold text-m-obsidian scale-110 shadow-m-gold/30' : 'bg-m-obsidian border-2 border-white/10 text-white/20']"
+          :class="[
+            step >= i 
+              ? isDark 
+                ? 'bg-m-gold text-m-obsidian scale-110 shadow-m-gold/30' 
+                : 'bg-amber-600 text-white scale-110 shadow-amber-600/30'
+              : isDark 
+                ? 'bg-m-obsidian border-2 border-white/10 text-white/20' 
+                : 'bg-white border-2 border-gray-900/30 text-gray-900/40'
+          ]"
         >
           {{ i }}
         </div>
