@@ -24,7 +24,7 @@ $baseDishes = [
         'description' => "Un plat sénégalais savoureux à base de poulet mariné au citron et aux oignons.",
         'category' => "Plats Résistants",
         'price' => 12.50,
-        'image_url' => "/src/assets/images/image1.jpg",
+        'image_url' => "http://localhost:8080/api/images?file=image1.jpg",
         'rating' => 4.5
     ],
     [
@@ -32,7 +32,7 @@ $baseDishes = [
         'description' => "Une sélection raffinée de sushis japonais frais et colorés.",
         'category' => "Plats Résistants", 
         'price' => 15.00,
-        'image_url' => "/src/assets/images/image2.jpg",
+        'image_url' => "http://localhost:8080/api/images?file=image2.jpg",
         'rating' => 4.8
     ],
     [
@@ -40,7 +40,7 @@ $baseDishes = [
         'description' => "Un plat ivoirien à base de semoule de manioc accompagnée de poisson grillé.",
         'category' => "Plats Résistants",
         'price' => 10.50,
-        'image_url' => "/src/assets/images/image3.jpg",
+        'image_url' => "http://localhost:8080/api/images?file=image3.jpg",
         'rating' => 4.3
     ]
 ];
@@ -61,7 +61,7 @@ for ($i = 4; $i <= 17; $i++) {
         'description' => $variation[1],
         'category' => "Plats Résistants",
         'price' => $variation[2],
-        'image_url' => "/src/assets/images/image$i.jpg",
+        'image_url' => "http://localhost:8080/api/images?file=image$i.jpg",
         'rating' => 4.0 + (rand(0, 8) / 10)
     ];
 }
@@ -96,7 +96,7 @@ for ($i = 1; $i <= 18; $i++) {
         'description' => $drink[1],
         'category' => "Boissons",
         'price' => $drink[2],
-        'image_url' => "/src/assets/images/image" . chr(64 + $i) . ".jpg", // A, B, C, etc.
+        'image_url' => "http://localhost:8080/api/images?file=" . chr(64 + $i) . ".jpg", // A, B, C, etc.
         'rating' => 4.0 + (rand(0, 8) / 10)
     ];
 }
@@ -126,7 +126,7 @@ for ($i = 1; $i <= 13; $i++) {
         'description' => $dessert[1],
         'category' => "Desserts",
         'price' => $dessert[2],
-        'image_url' => "/src/assets/images/dessert$i.jpg",
+        'image_url' => "http://localhost:8080/api/images?file=dessert$i.jpg",
         'rating' => 4.0 + (rand(0, 8) / 10)
     ];
 }
@@ -135,7 +135,7 @@ for ($i = 1; $i <= 13; $i++) {
 $allPlates = array_merge($baseDishes, $baseDrinks, $baseDesserts);
 
 // Insert all plates
-$insert_query = "INSERT INTO plates (name, description, price, category, image_url, rating) VALUES (:name, :description, :price, :category, :image_url, :rating)";
+$insert_query = "INSERT INTO plates (name, description, price, category, image_url, base_rating) VALUES (:name, :description, :price, :category, :image_url, :rating)";
 $insert_stmt = $db->prepare($insert_query);
 
 $success_count = 0;
