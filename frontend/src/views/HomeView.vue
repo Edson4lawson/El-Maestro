@@ -141,10 +141,10 @@ onMounted(() => {
       <!-- High-end Background Image with Parallax -->
       <div ref="parallaxBg" class="absolute inset-0 z-0">
         <div class="absolute inset-0 bg-black/40 z-10 rounded-b-3xl"></div>
-        <img 
+        <!-- <img 
           src="../assets/imageJ.jpg" 
           class="w-full h-full object-cover scale-110 rounded-b-3xl"
-        />
+        /> -->
       </div>
 
       <div class="container mx-auto px-6 md:px-12 grid md:grid-cols-2 gap-12 items-center relative z-20">
