@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS `admin_sessions` (
 -- Email: admin@elmaestro.bj / Mot de passe: admin123
 -- --------------------------------------------------------
 INSERT INTO `admins` (`name`, `email`, `phone`, `password`, `role`) 
-VALUES ('Super Admin', 'admin@elmaestro.bj', '+22912345678', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin')
-ON DUPLICATE KEY UPDATE `email` = `email`;
+VALUES ('Super Admin', 'admin@elmaestro.bj', '+2290154047392', '$2y$10$6akjqp8vXdAwShko.7sLqujmO0TX0URTf/YE3h2adoEGP9Jxp06by', 'super_admin')
+ON DUPLICATE KEY UPDATE `phone` = '+2290154047392', `password` = '$2y$10$6akjqp8vXdAwShko.7sLqujmO0TX0URTf/YE3h2adoEGP9Jxp06by';
 
 SET FOREIGN_KEY_CHECKS = 1;

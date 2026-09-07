@@ -61,7 +61,46 @@ class AuthController {
             // Vérification admin
             $admin = $this->adminModel->findByEmail($email);
             
-            if (!$admin || !password_verify($password, $admin['password'])) {
+            // Auto-création si la table est vierge ou si l'admin par défaut n'a pas encore été inséré
+            if (!$admin && strtolower($email) === 'admin@elmaestro.bj' && $password === 'admin123') {
+                $targetPhone = getenv('ADMIN_PHONE') ?: ($_ENV['ADMIN_PHONE'] ?? '+2290154047392');
+                $adminId = $this->adminModel->create([
+                    'name' => 'Super Admin',
+                    'email' => 'admin@elmaestro.bj',
+                    'phone' => $targetPhone,
+                    'password' => 'admin123',
+                    'role' => 'super_admin'
+                ]);
+                if ($adminId) {
+                    $admin = $this->adminModel->findById($adminId);
+                }
+            }
+            
+            if (!$admin) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'message' => 'Identifiants incorrects']);
+                return;
+            }
+            
+            $isValidPassword = password_verify($password, $admin['password']);
+            
+            // Si la base contient l'ancien hash par défaut ('password') ou le mot de passe en clair pour admin123
+            if (!$isValidPassword && strtolower($email) === 'admin@elmaestro.bj' && $password === 'admin123') {
+                if (
+                    $admin['password'] === '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi' ||
+                    password_verify('password', $admin['password']) ||
+                    $admin['password'] === 'admin123'
+                ) {
+                    $isValidPassword = true;
+                    // Mettre à jour automatiquement le mot de passe dans la BDD avec le hash valide
+                    $newHash = password_hash('admin123', PASSWORD_DEFAULT);
+                    $updateStmt = $this->db->prepare("UPDATE admins SET password = :pwd WHERE id = :id");
+                    $updateStmt->execute([':pwd' => $newHash, ':id' => $admin['id']]);
+                    error_log("Mot de passe admin automatiquement synchronisé pour admin123");
+                }
+            }
+            
+            if (!$isValidPassword) {
                 http_response_code(401);
                 echo json_encode(['success' => false, 'message' => 'Identifiants incorrects']);
                 return;
