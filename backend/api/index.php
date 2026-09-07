@@ -44,11 +44,18 @@ function handleError($errno, $errstr, $errfile, $errline) {
         http_response_code(500);
     }
     
-    echo json_encode([
+    $isDev = (getenv('APP_ENV') === 'development' || getenv('APP_DEBUG') === 'true');
+    $response = [
         'success' => false,
-        'message' => 'Internal server error',
-        'error' => $errstr
-    ]);
+        'message' => 'Internal server error'
+    ];
+    if ($isDev) {
+        $response['error'] = $errstr;
+        $response['file'] = $errfile;
+        $response['line'] = $errline;
+    }
+    
+    echo json_encode($response);
     exit();
 }
 
@@ -61,11 +68,16 @@ function handleException($exception) {
         http_response_code(500);
     }
     
-    echo json_encode([
+    $isDev = (getenv('APP_ENV') === 'development' || getenv('APP_DEBUG') === 'true');
+    $response = [
         'success' => false,
-        'message' => 'Internal server error',
-        'error' => $exception->getMessage()
-    ]);
+        'message' => 'Internal server error'
+    ];
+    if ($isDev) {
+        $response['error'] = $exception->getMessage();
+    }
+    
+    echo json_encode($response);
     exit();
 }
 
@@ -226,9 +238,11 @@ elseif ($method === 'POST' && (isRoute($uri, 'admin/login') || (isset($_GET['act
         $controller->login();
     } catch (Exception $e) {
         error_log("AuthController error: " . $e->getMessage());
+        $isDev = (getenv('APP_ENV') === 'development' || getenv('APP_DEBUG') === 'true');
+        http_response_code(500);
         echo json_encode([
             'success' => false,
-            'message' => 'Authentication error: ' . $e->getMessage()
+            'message' => $isDev ? 'Authentication error: ' . $e->getMessage() : 'Une erreur interne est survenue'
         ]);
     }
 }

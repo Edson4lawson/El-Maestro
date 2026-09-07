@@ -3,8 +3,7 @@ class OTPService {
     private $phoneNumber;
     
     public function __construct() {
-        // En développement, vous pouvez configurer un numéro par défaut
-        $this->phoneNumber = '+22912345678'; // À remplacer en production
+        $this->phoneNumber = getenv('ADMIN_PHONE') ?: ($_ENV['ADMIN_PHONE'] ?? '+2290154047392');
     }
     
     // Générer code OTP à 6 chiffres
@@ -14,39 +13,52 @@ class OTPService {
     
     // Envoyer OTP par SMS
     public function sendOTP($phone, $otpCode) {
-        // Log pour développement
-        error_log("OTP généré pour $phone: $otpCode");
+        $targetPhone = !empty($phone) ? $phone : $this->phoneNumber;
         
-        // Envoyer notification de développement
-        $this->sendDevNotification($phone, $otpCode);
+        // Log pour consultation dans les logs serveur (Render / Laragon)
+        error_log("=== EL MAESTRO OTP ===");
+        error_log("Destinataire : " . $targetPhone);
+        error_log("Code OTP : " . $otpCode);
+        error_log("Date d'expiration : " . date('Y-m-d H:i:s', strtotime('+5 minutes')));
+        error_log("======================");
         
-        // En production, intégrer avec un service SMS réel:
-        // Exemple avec Twilio:
-        /*
-        $sid = 'your_twilio_sid';
-        $token = 'your_twilio_token';
-        $from = '+1234567890';
+        // Si des identifiants Twilio sont configurés dans les variables d'environnement
+        $twilioSid = getenv('TWILIO_SID') ?: ($_ENV['TWILIO_SID'] ?? null);
+        $twilioToken = getenv('TWILIO_AUTH_TOKEN') ?: ($_ENV['TWILIO_AUTH_TOKEN'] ?? null);
+        $twilioFrom = getenv('TWILIO_PHONE_NUMBER') ?: ($_ENV['TWILIO_PHONE_NUMBER'] ?? null);
         
-        $client = new Twilio\Rest\Client($sid, $token);
-        
-        try {
-            $message = $client->messages->create(
-                $phone,
-                array(
-                    'from' => $from,
-                    'body' => "EL MAESTRO - Votre code de vérification: $otpCode. Valide 1 minute."
-                )
-            );
-            
-            error_log("SMS envoyé à $phone: SID " . $message->sid);
-            return true;
-        } catch (Exception $e) {
-            error_log("Erreur envoi SMS: " . $e->getMessage());
-            return false;
+        if ($twilioSid && $twilioToken && $twilioFrom) {
+            try {
+                $url = "https://api.twilio.com/2010-04-01/Accounts/{$twilioSid}/Messages.json";
+                $data = [
+                    'From' => $twilioFrom,
+                    'To' => $targetPhone,
+                    'Body' => "EL MAESTRO - Votre code de sécurité administrateur est : {$otpCode}. Valide 5 minutes."
+                ];
+                
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_USERPWD, "{$twilioSid}:{$twilioToken}");
+                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+                curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+                
+                $response = curl_exec($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+                
+                if ($httpCode >= 200 && $httpCode < 300) {
+                    error_log("SMS Twilio envoyé avec succès à {$targetPhone}");
+                    return true;
+                } else {
+                    error_log("Erreur Twilio HTTP {$httpCode}: {$response}");
+                }
+            } catch (Exception $e) {
+                error_log("Exception lors de l'envoi SMS Twilio : " . $e->getMessage());
+            }
         }
-        */
         
-        // Simulation envoi réussi
         return true;
     }
     
@@ -58,16 +70,6 @@ class OTPService {
     // Vérifier expiration
     public function isExpired($expiresAt) {
         return strtotime($expiresAt) < time();
-    }
-    
-    // Envoyer notification admin pour développement
-    public function sendDevNotification($phone, $otpCode) {
-        // Pour développement: afficher le code dans les logs
-        error_log("=== DÉVELOPPEMENT OTP ===");
-        error_log("Téléphone: $phone");
-        error_log("Code: $otpCode");
-        error_log("Valide jusqu'à: " . date('Y-m-d H:i:s', strtotime('+1 minute')));
-        error_log("========================");
     }
 }
 ?>

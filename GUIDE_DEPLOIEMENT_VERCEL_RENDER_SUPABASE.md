@@ -1,6 +1,7 @@
 # 🚀 Guide Complet de Déploiement : El Maestro
 
 Ce guide vous accompagne pas à pas pour déployer l'intégralité de l'application **El Maestro** sur le cloud en production avec :
+
 1. **Base de Données** : Supabase ou Neon (PostgreSQL) ou Aiven (MySQL)
 2. **Backend API (PHP)** : Render (Web Service Docker)
 3. **Frontend (Vue 3 / Vite)** : Vercel
@@ -8,6 +9,7 @@ Ce guide vous accompagne pas à pas pour déployer l'intégralité de l'applicat
 ---
 
 ## 📋 Table des Matières
+
 1. [Étape 1 : Déployer la Base de Données (Supabase ou Neon)](#étape-1--déployer-la-base-de-données)
 2. [Étape 2 : Déployer le Backend sur Render](#étape-2--déployer-le-backend-sur-render)
 3. [Étape 3 : Déployer le Frontend sur Vercel](#étape-3--déployer-le-frontend-sur-vercel)
@@ -20,6 +22,7 @@ Ce guide vous accompagne pas à pas pour déployer l'intégralité de l'applicat
 Vous avez le choix entre **Supabase** (recommandé), **Neon**, ou un hébergeur **MySQL (Aiven / Railway)**.
 
 ### Option A : Supabase (PostgreSQL - Recommandé)
+
 1. Rendez-vous sur [supabase.com](https://supabase.com) et créez un compte.
 2. Cliquez sur **"New project"** :
    - **Name** : `el-maestro`
@@ -36,6 +39,7 @@ Vous avez le choix entre **Supabase** (recommandé), **Neon**, ou un hébergeur 
 ---
 
 ### Option B : Neon (PostgreSQL Serverless)
+
 1. Rendez-vous sur [neon.tech](https://neon.tech) et créez un projet.
 2. Allez dans l'onglet **SQL Editor**, collez le contenu de [`database/supabase_neon_postgres.sql`](file:///c:/laragon/www/El%20maestro/database/supabase_neon_postgres.sql) et cliquez sur **Run**.
 3. Dans votre tableau de bord Neon, copiez la chaîne **Connection Details** (format: `postgresql://neondb_owner:password@ep-xyz.eu-central-1.aws.neon.tech/neondb?sslmode=require`).
@@ -56,12 +60,12 @@ Vous avez le choix entre **Supabase** (recommandé), **Neon**, ou un hébergeur 
    - **Instance Type** : **Free**
 5. Dans la section **Environment Variables**, ajoutez :
 
-| Clé | Valeur | Description |
-|---|---|---|
+| Clé            | Valeur                                       | Description                  |
+| -------------- | -------------------------------------------- | ---------------------------- |
 | `DATABASE_URL` | `postgresql://...` (votre URL Supabase/Neon) | Chaîne de connexion complète |
-| `FRONTEND_URL` | `https://votre-app.vercel.app` | URL de votre frontend Vercel |
+| `FRONTEND_URL` | `https://votre-app.vercel.app`               | URL de votre frontend Vercel |
 
-*(Note : Si vous utilisez des variables MySQL individuelles : `DB_DRIVER=mysql`, `DB_HOST=...`, `DB_PORT=3306`, `DB_NAME=...`, `DB_USER=...`, `DB_PASS=...`)*
+_(Note : Si vous utilisez des variables MySQL individuelles : `DB_DRIVER=mysql`, `DB_HOST=...`, `DB_PORT=3306`, `DB_NAME=...`, `DB_USER=...`, `DB_PASS=...`)_
 
 6. Cliquez sur **"Create Web Service"**.
 7. Render va construire l'image Docker et démarrer le serveur. Une fois déployé, notez l'URL fournie par Render (ex: `https://el-maestro-api.onrender.com`).
@@ -80,8 +84,8 @@ Vous avez le choix entre **Supabase** (recommandé), **Neon**, ou un hébergeur 
    - **Output Directory** : `dist` (par défaut)
 5. Dans la section **Environment Variables**, ajoutez :
 
-| Nom | Valeur |
-|---|---|
+| Nom            | Valeur                                                                  |
+| -------------- | ----------------------------------------------------------------------- |
 | `VITE_API_URL` | `https://el-maestro-api.onrender.com/api` (URL de votre backend Render) |
 
 6. Cliquez sur **"Deploy"**.

@@ -58,11 +58,11 @@ class AdminMenuController {
             // Status filter
             if ($status) {
                 if ($status === 'available') {
-                    $query .= " AND is_available = 1";
+                    $query .= " AND is_available = TRUE";
                 } elseif ($status === 'unavailable') {
-                    $query .= " AND is_available = 0";
+                    $query .= " AND is_available = FALSE";
                 } elseif ($status === 'signature') {
-                    $query .= " AND is_signature = 1";
+                    $query .= " AND is_signature = TRUE";
                 }
             }
             
@@ -112,11 +112,11 @@ class AdminMenuController {
             
             if ($status) {
                 if ($status === 'available') {
-                    $countQuery .= " AND is_available = 1";
+                    $countQuery .= " AND is_available = TRUE";
                 } elseif ($status === 'unavailable') {
-                    $countQuery .= " AND is_available = 0";
+                    $countQuery .= " AND is_available = FALSE";
                 } elseif ($status === 'signature') {
-                    $countQuery .= " AND is_signature = 1";
+                    $countQuery .= " AND is_signature = TRUE";
                 }
             }
             
@@ -384,13 +384,13 @@ class AdminMenuController {
             $total = $totalStmt->fetch(PDO::FETCH_ASSOC)['total'];
             
             // Available plates
-            $availableQuery = "SELECT COUNT(*) as available FROM plates WHERE is_available = 1";
+            $availableQuery = "SELECT COUNT(*) as available FROM plates WHERE is_available = TRUE";
             $availableStmt = $this->db->prepare($availableQuery);
             $availableStmt->execute();
             $available = $availableStmt->fetch(PDO::FETCH_ASSOC)['available'];
             
             // Signature plates
-            $signatureQuery = "SELECT COUNT(*) as signature FROM plates WHERE is_signature = 1";
+            $signatureQuery = "SELECT COUNT(*) as signature FROM plates WHERE is_signature = TRUE";
             $signatureStmt = $this->db->prepare($signatureQuery);
             $signatureStmt->execute();
             $signature = $signatureStmt->fetch(PDO::FETCH_ASSOC)['signature'];

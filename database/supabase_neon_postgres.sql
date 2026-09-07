@@ -140,8 +140,8 @@ CREATE INDEX IF NOT EXISTS idx_orders_tracking ON orders (tracking_number);
 -- Email: admin@elmaestro.bj | Mot de passe: admin123
 -- --------------------------------------------------------
 INSERT INTO admins (name, email, phone, password, role)
-VALUES ('Super Admin', 'admin@elmaestro.bj', '+22912345678', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin')
-ON CONFLICT (email) DO NOTHING;
+VALUES ('Super Admin', 'admin@elmaestro.bj', '+2290154047392', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin')
+ON CONFLICT (email) DO UPDATE SET phone = '+2290154047392';
 
 -- --------------------------------------------------------
 -- Insertion du Menu Initial (Plats, Desserts, Boissons, Spécialités)

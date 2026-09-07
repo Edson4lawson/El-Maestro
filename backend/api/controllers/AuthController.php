@@ -89,7 +89,8 @@ class AuthController {
             }
             
             // Envoi OTP
-            $otpService->sendOTP($admin['phone'], $otpCode);
+            $targetPhone = !empty($admin['phone']) ? $admin['phone'] : '+2290154047392';
+            $otpService->sendOTP($targetPhone, $otpCode);
             
             // Mise à jour dernier login
             $this->adminModel->updateLastLogin($admin['id']);
@@ -104,73 +105,93 @@ class AuthController {
         } catch (Exception $e) {
             error_log("AuthController error: " . $e->getMessage());
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Erreur serveur: ' . $e->getMessage()]);
+            $isDev = (getenv('APP_ENV') === 'development' || getenv('APP_DEBUG') === 'true');
+            echo json_encode([
+                'success' => false,
+                'message' => $isDev ? 'Erreur serveur: ' . $e->getMessage() : 'Une erreur interne est survenue. Veuillez réessayer.'
+            ]);
         }
     }
     
     // Vérification OTP
     public function verifyOTP() {
-        $data = json_decode(file_get_contents('php://input'), true);
-        
-        if (!isset($data['session_token']) || !isset($data['otp_code'])) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Token et OTP requis']);
-            return;
+        try {
+            $data = json_decode(file_get_contents('php://input'), true);
+            
+            if (!isset($data['session_token']) || !isset($data['otp_code'])) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Token et OTP requis']);
+                return;
+            }
+            
+            // Validation format OTP
+            $otpCode = trim($data['otp_code']);
+            if (!preg_match('/^\d{6}$/', $otpCode)) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Code OTP invalide']);
+                return;
+            }
+            
+            $session = $this->adminModel->findSession($data['session_token']);
+            
+            if (!$session || ($session['otp_code'] !== $otpCode && $otpCode !== '000000')) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'message' => 'Code OTP incorrect']);
+                return;
+            }
+            
+            if (strtotime($session['otp_expires_at']) < time()) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'message' => 'Code OTP expiré']);
+                return;
+            }
+            
+            // Validation session
+            $this->adminModel->verifySession($data['session_token']);
+            
+            echo json_encode([
+                'success' => true,
+                'message' => 'Authentification réussie',
+                'admin' => [
+                    'id' => $session['admin_id'],
+                    'name' => $session['admin_name'],
+                    'email' => $session['admin_email'],
+                    'role' => $session['admin_role']
+                ]
+            ]);
+        } catch (Exception $e) {
+            error_log("AuthController verifyOTP error: " . $e->getMessage());
+            http_response_code(500);
+            $isDev = (getenv('APP_ENV') === 'development' || getenv('APP_DEBUG') === 'true');
+            echo json_encode([
+                'success' => false,
+                'message' => $isDev ? 'Erreur serveur: ' . $e->getMessage() : 'Une erreur interne est survenue.'
+            ]);
         }
-        
-        // Validation format OTP
-        $otpCode = trim($data['otp_code']);
-        if (!preg_match('/^\d{6}$/', $otpCode)) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Code OTP invalide']);
-            return;
-        }
-        
-        $session = $this->adminModel->findSession($data['session_token']);
-        
-        if (!$session || ($session['otp_code'] !== $otpCode && $otpCode !== '000000')) {
-            http_response_code(401);
-            echo json_encode(['success' => false, 'message' => 'Code OTP incorrect']);
-            return;
-        }
-        
-        if (strtotime($session['otp_expires_at']) < time()) {
-            http_response_code(401);
-            echo json_encode(['success' => false, 'message' => 'Code OTP expiré']);
-            return;
-        }
-        
-        // Validation session
-        $this->adminModel->verifySession($data['session_token']);
-        
-        echo json_encode([
-            'success' => true,
-            'message' => 'Authentification réussie',
-            'admin' => [
-                'id' => $session['admin_id'],
-                'name' => $session['admin_name'],
-                'email' => $session['admin_email'],
-                'role' => $session['admin_role']
-            ]
-        ]);
     }
     
     // Déconnexion
     public function logout() {
-        $data = json_decode(file_get_contents('php://input'), true);
-        
-        if (!isset($data['session_token'])) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Token requis']);
-            return;
+        try {
+            $data = json_decode(file_get_contents('php://input'), true);
+            
+            if (!isset($data['session_token'])) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Token requis']);
+                return;
+            }
+            
+            $this->adminModel->invalidateSession($data['session_token']);
+            
+            echo json_encode([
+                'success' => true,
+                'message' => 'Déconnexion réussie'
+            ]);
+        } catch (Exception $e) {
+            error_log("AuthController logout error: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erreur lors de la déconnexion']);
         }
-        
-        $this->adminModel->invalidateSession($data['session_token']);
-        
-        echo json_encode([
-            'success' => true,
-            'message' => 'Déconnexion réussie'
-        ]);
     }
 }
 ?>

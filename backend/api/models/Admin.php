@@ -10,7 +10,7 @@ class Admin {
     
     // Trouver admin par email
     public function findByEmail($email) {
-        $query = "SELECT * FROM admins WHERE email = :email AND is_active = 1 LIMIT 1";
+        $query = "SELECT * FROM admins WHERE email = :email AND is_active = TRUE LIMIT 1";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
@@ -63,7 +63,7 @@ class Admin {
     
     // Valider session (OTP vérifié)
     public function verifySession($sessionToken) {
-        $query = "UPDATE admin_sessions SET is_verified = 1 WHERE session_token = :session_token";
+        $query = "UPDATE admin_sessions SET is_verified = TRUE WHERE session_token = :session_token";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':session_token', $sessionToken);
         
@@ -164,9 +164,13 @@ class Admin {
         $stmt = $this->db->prepare($query);
         
         foreach ($params as $key => $value) {
-            $stmt->bindParam($key, $value);
+            if (is_bool($value)) {
+                $stmt->bindValue($key, $value, PDO::PARAM_BOOL);
+            } else {
+                $stmt->bindValue($key, $value);
+            }
         }
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         
         return $stmt->execute();
     }
