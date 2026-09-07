@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { Truck, MapPin, CreditCard, Wallet, CheckCircle2, FileText, Smartphone } from 'lucide-vue-next'
+import { Truck, MapPin, CreditCard, Wallet, CheckCircle2, FileText, Smartphone, Star } from 'lucide-vue-next'
 import { useCartStore } from '../stores/cart'
 import { orderService } from '../services/api'
 
@@ -24,6 +24,7 @@ const processOrder = () => {
 
 const processPayment = async () => {
   try {
+    // Simuler le traitement du paiement
     const orderData = {
       ...formData.value,
       total: total.value,
@@ -33,12 +34,35 @@ const processPayment = async () => {
         price: item.price
       }))
     }
-    const response = await orderService.create(orderData)
-    trackingNumber.value = response.data.tracking
+    
+    // Simulation du délai de traitement (2 secondes)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    
+    // Générer un numéro de tracking fictif
+    trackingNumber.value = 'ELM-' + Math.random().toString(36).substring(2, 10).toUpperCase()
+    
+    // Afficher une notification de succès
+    if (window.showToast) {
+      window.showToast({
+        type: 'success',
+        title: 'Paiement réussi !',
+        message: `Commande #${trackingNumber.value} confirmée`,
+        duration: 4000
+      })
+    }
+    
     step.value = 3
-    cartStore.clearCart() // Assuming a clearCart action exists
+    cartStore.clearCart()
   } catch (error) {
     console.error('Error processing payment:', error)
+    if (window.showToast) {
+      window.showToast({
+        type: 'error',
+        title: 'Erreur de paiement',
+        message: 'Une erreur est survenue lors du traitement',
+        duration: 3000
+      })
+    }
   }
 }
 

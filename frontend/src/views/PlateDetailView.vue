@@ -22,13 +22,9 @@ const isDark = inject('isDark', ref(true))
 const increment = () => quantity.value++
 const decrement = () => { if (quantity.value > 1) quantity.value-- }
 
-const showToast = ref(false)
-
 const addToCart = () => {
   if (plate.value) {
     cartStore.addToCart(plate.value, quantity.value)
-    showToast.value = true
-    setTimeout(() => showToast.value = false, 3000)
   }
 }
 async function submitRating(newRating) {
@@ -90,14 +86,6 @@ onMounted(async () => {
 
 <template>
   <div class="px-6 md:px-12 py-12 relative" :class="isDark ? 'bg-m-obsidian' : 'bg-m-linen'">
-    <!-- Toast Notification -->
-    <Transition name="toast">
-      <div v-if="showToast" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] bg-m-gold text-m-obsidian px-8 py-4 rounded-2xl shadow-2xl font-bold flex items-center gap-3">
-        <ShoppingBag class="w-6 h-6" />
-        {{ quantity }} plat(s) ajouté(s) au panier
-      </div>
-    </Transition>
-
     <div v-if="plate" class="container mx-auto">
       <button @click="router.back()" class="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity mb-12 group">
         <ChevronLeft class="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> Retour au menu

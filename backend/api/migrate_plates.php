@@ -96,7 +96,7 @@ for ($i = 1; $i <= 18; $i++) {
         'description' => $drink[1],
         'category' => "Boissons",
         'price' => $drink[2],
-        'image_url' => "http://localhost:8080/api/images?file=" . chr(64 + $i) . ".jpg", // A, B, C, etc.
+        'image_url' => "http://localhost:8080/api/images?file=image" . chr(64 + $i) . ".jpg", // imageA, imageB, imageC, etc.
         'rating' => 4.0 + (rand(0, 8) / 10)
     ];
 }

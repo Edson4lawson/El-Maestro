@@ -1,0 +1,21 @@
+# Sécurité API Backend El Maestro
+# Désactiver le listage des répertoires
+Options -Indexes
+
+# Bloquer l'accès direct aux fichiers sensibles
+<FilesMatch "^(\.env|\.git|.*\.sql|.*\.log|composer\..*)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Headers de sécurité de base
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Frame-Options "SAMEORIGIN"
+</IfModule>

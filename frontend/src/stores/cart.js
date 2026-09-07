@@ -31,7 +31,15 @@ export const useCartStore = defineStore('cart', () => {
       items.value.push({ ...plate, quantity })
     }
     
-    // Add a simple logic for animation/feedback if needed here
+    // Show elegant toast notification
+    if (window.showToast) {
+      window.showToast({
+        type: 'cart',
+        title: 'Ajouté au panier',
+        message: `${quantity}x ${plate.name}`,
+        duration: 2500
+      })
+    }
   }
 
   function updateQuantity(plateId, delta) {

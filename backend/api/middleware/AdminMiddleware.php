@@ -1,6 +1,6 @@
 <?php
-include_once '../config/database.php';
-include_once '../models/Admin.php';
+include_once __DIR__ . '/../config/database.php';
+include_once __DIR__ . '/../models/Admin.php';
 
 class AdminMiddleware {
     private $db;

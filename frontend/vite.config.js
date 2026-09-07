@@ -9,4 +9,17 @@ export default defineConfig({
       ...templateCompilerOptions
     }),
   ],
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'chartjs': ['chart.js'],
+          'three':   ['three', '@tresjs/core', '@tresjs/cientos'],
+          'vendor':  ['vue', 'vue-router', 'pinia'],
+          'lucide':  ['lucide-vue-next'],
+        }
+      }
+    }
+  }
 })

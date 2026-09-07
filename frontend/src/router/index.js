@@ -1,9 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import adminRoutes from './admin.js'
+import { useAuthStore } from '../stores/auth'
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
+    // Public routes
     {
       path: '/',
       name: 'home',
@@ -34,25 +37,19 @@ const router = createRouter({
       name: 'reservations',
       component: () => import('../views/ReservationsView.vue')
     },
-    {
-      path: '/admin/login',
-      name: 'admin-login',
-      component: () => import('../views/admin/LoginView.vue')
-    },
-    {
-      path: '/admin/otp',
-      name: 'admin-otp',
-      component: () => import('../views/admin/OTPView.vue')
-    },
-    {
-      path: '/admin/dashboard',
-      name: 'admin-dashboard',
-      component: () => import('../views/admin/DashboardView.vue')
-    }
+    
+    // Admin routes
+    ...adminRoutes
   ],
   scrollBehavior() {
     return { top: 0 }
   }
+})
+
+// Global navigation guards
+router.beforeEach((to, from, next) => {
+  console.log('Navigating to:', to.path)
+  next()
 })
 
 export default router

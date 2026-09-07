@@ -17,6 +17,9 @@ class OTPService {
         // Log pour développement
         error_log("OTP généré pour $phone: $otpCode");
         
+        // Envoyer notification de développement
+        $this->sendDevNotification($phone, $otpCode);
+        
         // En production, intégrer avec un service SMS réel:
         // Exemple avec Twilio:
         /*

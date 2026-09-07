@@ -1,6 +1,6 @@
 <script setup>
-import { ref, onMounted, provide } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted, provide } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { Sun, Moon, ShoppingBag, Menu as MenuIcon, X } from 'lucide-vue-next'
 import Lenis from '@studio-freight/lenis'
 import { useCartStore } from './stores/cart'
@@ -9,7 +9,9 @@ import FooterSection from './components/FooterSection.vue'
 
 const isDark = ref(true)
 const isMenuOpen = ref(false)
+const route = useRoute()
 const router = useRouter()
+const isAdmin = computed(() => route.path.startsWith('/admin'))
 const cartStore = useCartStore()
 
 // Provide theme state to child components
@@ -48,8 +50,8 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen flex flex-col overflow-x-hidden">
-  <!-- Navbar -->
-  <nav
+  <!-- Navbar (masquée sur les pages admin) -->
+  <nav v-if="!isAdmin"
     class="fixed top-0 left-0 right-0 z-50 py-4 px-6 md:px-12 flex justify-between items-center transition-all duration-500 border-b"
     :class="[isDark ? 'bg-m-obsidian/85 backdrop-blur-xl border-white/10' : 'bg-m-linen/85 backdrop-blur-xl border-black/5']">
     <div class="flex items-center gap-10">
@@ -106,7 +108,7 @@ onMounted(() => {
 
   <!-- Mobile Menu -->
   <Transition name="fade">
-    <div v-if="isMenuOpen"
+    <div v-if="isMenuOpen && !isAdmin"
       class="fixed inset-0 z-40 backdrop-blur-xl flex flex-col items-center justify-center gap-8 text-2xl font-display"
       :class="isDark ? 'bg-m-obsidian/95' : 'bg-m-linen/95'">
       <RouterLink @click="toggleMenu" to="/" class="hover:text-m-gold"
@@ -122,7 +124,7 @@ onMounted(() => {
   </Transition>
 
   <!-- Main Content -->
-  <main class="flex-grow pt-20">
+  <main :class="isAdmin ? 'flex-grow w-full min-w-0' : 'flex-grow pt-20'">
     <RouterView v-slot="{ Component }">
       <Transition name="page" mode="out-in">
         <component :is="Component" />
@@ -133,8 +135,8 @@ onMounted(() => {
   <!-- Toast Notifications -->
   <ToastNotifications />
 
-  <!-- Footer -->
-  <FooterSection v-if="!$route.path.includes('/commander') && !$route.path.includes('/plate/') && !$route.path.includes('/details/')" />
+  <!-- Footer (masqué sur les pages admin) -->
+  <FooterSection v-if="!isAdmin && !$route.path.includes('/commander') && !$route.path.includes('/plate/') && !$route.path.includes('/details/')" />
 </div>
 </template>
 

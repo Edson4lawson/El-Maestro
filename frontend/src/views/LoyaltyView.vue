@@ -78,10 +78,10 @@ const history = ref([])
             v-model="searchPhone"
             type="text" 
             placeholder="Entrez votre numéro de téléphone..."
-            class="w-full bg-white/5 border border-white/10 rounded-full py-4 pl-12 pr-6 focus:border-m-gold outline-none transition-all text-center font-bold"
+            class="w-full bg-white/5 border border-white/10 rounded-full py-4 pl-8 pr-20 focus:border-m-gold outline-none transition-all text-center font-bold"
             @keyup.enter="checkLoyalty"
           />
-          <Search class="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 opacity-40 group-focus-within:text-m-gold group-focus-within:opacity-100 transition-all" />
+          <Search class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 opacity-40 group-focus-within:text-m-gold group-focus-within:opacity-100 transition-all" />
           <button @click="checkLoyalty" class="absolute right-2 top-1/2 -translate-y-1/2 bg-m-gold text-m-obsidian px-6 py-2 rounded-full font-bold text-sm hover:scale-105 transition-transform">
             {{ loading ? '...' : 'Vérifier' }}
           </button>

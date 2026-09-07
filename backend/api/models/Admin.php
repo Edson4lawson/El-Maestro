@@ -1,5 +1,5 @@
 <?php
-include_once '../config/database.php';
+include_once __DIR__ . '/../config/database.php';
 
 class Admin {
     private $db;
@@ -30,14 +30,16 @@ class Admin {
     
     // Créer session admin
     public function createSession($adminId, $sessionToken, $otpCode, $otpExpires) {
+        $expiresAt = date('Y-m-d H:i:s', time() + 86400); // 24 heures
         $query = "INSERT INTO admin_sessions (admin_id, session_token, otp_code, otp_expires_at, expires_at) 
-                  VALUES (:admin_id, :session_token, :otp_code, :otp_expires_at, DATE_ADD(NOW(), INTERVAL 24 HOUR))";
+                  VALUES (:admin_id, :session_token, :otp_code, :otp_expires_at, :expires_at)";
         $stmt = $this->db->prepare($query);
         
         $stmt->bindParam(':admin_id', $adminId);
         $stmt->bindParam(':session_token', $sessionToken);
         $stmt->bindParam(':otp_code', $otpCode);
         $stmt->bindParam(':otp_expires_at', $otpExpires);
+        $stmt->bindParam(':expires_at', $expiresAt);
         
         if ($stmt->execute()) {
             return $this->db->lastInsertId();
