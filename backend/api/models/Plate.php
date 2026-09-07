@@ -19,7 +19,8 @@ class Plate {
         $query = "SELECT p.*, AVG(r.rating) as avg_user_rating 
                   FROM " . $this->table_name . " p
                   LEFT JOIN reviews r ON p.id = r.plate_id
-                  GROUP BY p.id";
+                  GROUP BY p.id
+                  ORDER BY p.id ASC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;

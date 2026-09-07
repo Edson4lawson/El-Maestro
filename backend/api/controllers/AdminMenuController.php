@@ -35,7 +35,7 @@ class AdminMenuController {
             $category = $_GET['category'] ?? null;
             $status = $_GET['status'] ?? null;
             $search = $_GET['search'] ?? null;
-            $limit = $_GET['limit'] ?? 50;
+            $limit = $_GET['limit'] ?? 200;
             $offset = $_GET['offset'] ?? 0;
             $sortBy = $_GET['sort'] ?? 'name';
             $sortOrder = $_GET['order'] ?? 'ASC';

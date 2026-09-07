@@ -1,147 +1,13 @@
 -- ========================================================
--- BASE DE DONNÉES COMPLÈTE POUR PRODUCTION : EL MAESTRO
--- Compatible MySQL 5.7+ / MySQL 8.0+ / MariaDB 10.3+
--- Encodage : UTF-8 (utf8mb4)
+-- EL MAESTRO - INSERTION DE TOUS LES PLATS (58 ÉLÉMENTS)
+-- Compatible PostgreSQL (Supabase / Neon) & MySQL
 -- ========================================================
 
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
-
--- --------------------------------------------------------
--- 1. Table des Plats (plates)
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS `plates` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(255) NOT NULL,
-    `description` TEXT,
-    `price` DECIMAL(10, 2) NOT NULL,
-    `category` VARCHAR(100),
-    `image_url` VARCHAR(255),
-    `base_rating` DECIMAL(2, 1) DEFAULT 5.0,
-    `is_signature` BOOLEAN DEFAULT FALSE,
-    `is_available` BOOLEAN DEFAULT TRUE,
-    `prep_time` VARCHAR(20) DEFAULT '20-30 min',
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
--- 2. Table des Avis (reviews)
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS `reviews` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `plate_id` INT NOT NULL,
-    `user_name` VARCHAR(100),
-    `rating` INT CHECK (`rating` >= 1 AND `rating` <= 6),
-    `comment` TEXT,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (`plate_id`) REFERENCES `plates`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
--- 3. Table des Commandes (orders)
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS `orders` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `customer_name` VARCHAR(255) NOT NULL,
-    `customer_phone` VARCHAR(20) NOT NULL,
-    `customer_address` TEXT NOT NULL,
-    `total_price` DECIMAL(10, 2) NOT NULL,
-    `payment_method` ENUM('mtn', 'moov', 'card', 'cash') NOT NULL,
-    `payment_status` ENUM('pending', 'paid', 'failed') DEFAULT 'pending',
-    `delivery_status` ENUM('preparing', 'on_route', 'delivered') DEFAULT 'preparing',
-    `tracking_number` VARCHAR(50) UNIQUE,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
--- 4. Éléments de Commande (order_items)
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS `order_items` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `order_id` INT NOT NULL,
-    `plate_id` INT NOT NULL,
-    `quantity` INT DEFAULT 1,
-    `price_at_time` DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`) ON DELETE CASCADE,
-    FOREIGN KEY (`plate_id`) REFERENCES `plates`(`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
--- 5. Utilisateurs Fidélité (loyalty_users)
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS `loyalty_users` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `phone` VARCHAR(20) UNIQUE NOT NULL,
-    `points` INT DEFAULT 0,
-    `tier` ENUM('Bronze', 'Argent', 'Or', 'Platine') DEFAULT 'Bronze',
-    `last_order_at` TIMESTAMP NULL,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
--- 6. Table des Réservations (reservations)
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS `reservations` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `customer_name` VARCHAR(100) NOT NULL,
-    `customer_email` VARCHAR(100),
-    `reservation_date` DATE NOT NULL,
-    `reservation_time` TIME NOT NULL,
-    `people_count` VARCHAR(20),
-    `special_request` TEXT,
-    `status` ENUM('pending', 'confirmed', 'cancelled') DEFAULT 'pending',
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
--- 7. Table des Administrateurs (admins)
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS `admins` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(100) NOT NULL,
-    `email` VARCHAR(255) UNIQUE NOT NULL,
-    `phone` VARCHAR(20) NOT NULL,
-    `password` VARCHAR(255) NOT NULL,
-    `role` ENUM('super_admin', 'admin', 'manager') DEFAULT 'admin',
-    `is_active` BOOLEAN DEFAULT TRUE,
-    `last_login` TIMESTAMP NULL,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX `idx_admin_email` (`email`),
-    INDEX `idx_admin_active` (`is_active`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
--- 8. Table des Sessions Administrateurs (admin_sessions)
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS `admin_sessions` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `admin_id` INT NOT NULL,
-    `session_token` VARCHAR(255) UNIQUE NOT NULL,
-    `otp_code` VARCHAR(6) NULL,
-    `otp_expires_at` TIMESTAMP NULL,
-    `is_verified` BOOLEAN DEFAULT FALSE,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `expires_at` TIMESTAMP NOT NULL,
-    FOREIGN KEY (`admin_id`) REFERENCES `admins`(`id`) ON DELETE CASCADE,
-    INDEX `idx_session_token` (`session_token`),
-    INDEX `idx_admin_id` (`admin_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
--- Compte administrateur par défaut
--- Email: admin@elmaestro.bj / Mot de passe: admin123
--- --------------------------------------------------------
-INSERT INTO `admins` (`name`, `email`, `phone`, `password`, `role`) 
-VALUES ('Super Admin', 'admin@elmaestro.bj', '+2290154047392', '$2y$10$6akjqp8vXdAwShko.7sLqujmO0TX0URTf/YE3h2adoEGP9Jxp06by', 'super_admin')
-ON DUPLICATE KEY UPDATE `phone` = '+2290154047392', `password` = '$2y$10$6akjqp8vXdAwShko.7sLqujmO0TX0URTf/YE3h2adoEGP9Jxp06by';
-
--- --------------------------------------------------------
--- Insertion du Menu Initial Complet (58 Éléments)
--- --------------------------------------------------------
-INSERT INTO `plates` (`name`, `description`, `price`, `category`, `image_url`, `is_signature`, `base_rating`, `is_available`)
+INSERT INTO plates (name, description, price, category, image_url, is_signature, base_rating, is_available)
 VALUES 
+-- --------------------------------------------------------
 -- 1. ENTRÉES (9 éléments)
+-- --------------------------------------------------------
 ('Sushi Mix', 'Assortiment raffiné de 12 pièces de sushis et makis préparés avec du poisson frais du jour.', 9500.00, 'Entrées', 'Sushi Mix.jpg', FALSE, 5.8, TRUE),
 ('Foie Gras Poêlé', 'Foie gras de canard poêlé à la perfection, chutney de mangue caramélisée et pain brioché tiède.', 12000.00, 'Entrées', 'Foie Gras Poêlé.jpg', TRUE, 5.9, TRUE),
 ('Carpaccio de Bœuf', 'Fines lamelles de filet de bœuf mariné, huile d''olive extra vierge, copeaux de parmesan et roquette.', 7000.00, 'Entrées', 'Carpaccio de Bœuf.jpg', FALSE, 5.6, TRUE),
@@ -152,7 +18,9 @@ VALUES
 ('Soupe du Jour du Chef', 'Soupe artisanale mijotée avec des légumes frais du marché et croûtons dorés à l''huile d''olive.', 3500.00, 'Entrées', 'Soupe du Jour.jpg', FALSE, 5.2, TRUE),
 ('Velouté de Potiron', 'Onctueux velouté de potiron parfumé aux épices douces et crème fraîche battue.', 4000.00, 'Entrées', 'Velouté de Potiron.jpg', FALSE, 5.5, TRUE),
 
+-- --------------------------------------------------------
 -- 2. PLATS RÉSISTANTS (17 éléments)
+-- --------------------------------------------------------
 ('Poulet Braisé Maestro', 'Poulet fermier mariné 24h aux épices secrètes du Bénin, braisé sur charbon ardent.', 6000.00, 'Plats Résistants', 'Poulet Braisé Maestro.jpg', TRUE, 6.0, TRUE),
 ('Poisson Grillé Royal', 'Capitaine frais du littoral de Cotonou braisé, sauce vierge pimentée et alloco doré.', 9000.00, 'Plats Résistants', 'Poisson Grillé Royal.jpg', TRUE, 6.0, TRUE),
 ('Attiéké Poisson Braisé', 'Semoule de manioc vapeur de qualité supérieure avec bar grillé et piment doux écrasé.', 7000.00, 'Plats Résistants', 'Attiéké Poisson.jpg', TRUE, 6.0, TRUE),
@@ -171,7 +39,9 @@ VALUES
 ('Pizza Artisanale Maestro', 'Pâte à pizza fine maison, sauce tomate mijotée, mozzarella fondante, jambon braisé et basilic.', 6000.00, 'Plats Résistants', 'pizza.jpg', FALSE, 5.8, TRUE),
 ('Riz Cantonaise au Poulet', 'Riz sauté au wok avec émincé de poulet, petits pois, œufs brouillés et sauce soja.', 4500.00, 'Plats Résistants', 'riz cantonaise.jpg', FALSE, 5.6, TRUE),
 
+-- --------------------------------------------------------
 -- 3. DESSERTS (13 éléments)
+-- --------------------------------------------------------
 ('Mousse au Chocolat Gold 24k', 'Chocolat noir 70% intense de São Tomé et éclats d''or comestible 24 carats.', 4500.00, 'Desserts', 'Mousse au Chocolat.jpg', TRUE, 6.0, TRUE),
 ('Tiramisu Classique Maestro', 'Biscuits savoiardi imbibés d''espresso grand cru, crème mascarpone vanillée et cacao amer.', 4000.00, 'Desserts', 'Tiramisu Classique.jpg', TRUE, 6.0, TRUE),
 ('Fondant Brownie Chaud', 'Brownie coulant aux noix de pécan servi chaud avec sa boule de glace vanille artisanale.', 3500.00, 'Desserts', 'Brownie Chaud.jpg', FALSE, 5.9, TRUE),
@@ -186,7 +56,9 @@ VALUES
 ('Tarte au Citron Meringuée', 'Pâte sablée croustillante, crème au citron jaune et meringue italienne dorée au chalumeau.', 3500.00, 'Desserts', 'Tarte au Citron.jpg', FALSE, 5.7, TRUE),
 ('Tarte aux Pommes Fine', 'Tarte fine feuilletée aux pommes caramélisées au four avec pointe de cannelle.', 3500.00, 'Desserts', 'Tarte aux Pommes.jpg', FALSE, 5.6, TRUE),
 
+-- --------------------------------------------------------
 -- 4. BOISSONS (19 éléments)
+-- --------------------------------------------------------
 ('Cocktail Tropical Ananas & Passion', 'Fruits frais du Bénin pressés minute, sirop de canne infusé à la vanille bourbon.', 3500.00, 'Boissons', 'Cocktail Tropical.jpg', TRUE, 5.9, TRUE),
 ('Mojito Prestige Maestro', 'Menthe fraîche froissée, citron vert bio, eau pétillante et touche florale.', 4000.00, 'Boissons', 'Mojito Sans Alcool.jpg', TRUE, 6.0, TRUE),
 ('Cocktail Ananas Frais', 'Jus d''ananas pain de sucre pressé, pointe de coco et zeste de citron vert.', 3000.00, 'Boissons', 'Cocktail Ananas.jpg', FALSE, 5.7, TRUE),
@@ -206,5 +78,3 @@ VALUES
 ('Lait Caillé Frais Traditionnel', 'Lait caillé artisanal frais, riche et savoureux selon la recette locale.', 1500.00, 'Boissons', 'lait caillé.jpg', FALSE, 5.4, TRUE),
 ('Eau Minérale Naturelle 1.5L', 'Bouteille d''eau minérale de source pure servie bien fraîche.', 1000.00, 'Boissons', 'Eau Minérale.jpg', FALSE, 5.0, TRUE),
 ('Eau Pétillante Citron Vert', 'Eau gazeuse naturelle accompagnée d''un quartier de citron vert frais.', 1200.00, 'Boissons', 'Eau Pétillante.jpg', FALSE, 5.0, TRUE);
-
-SET FOREIGN_KEY_CHECKS = 1;
